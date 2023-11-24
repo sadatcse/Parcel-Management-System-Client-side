@@ -87,7 +87,7 @@ const Register = () => {
             const email =result.user?.email
             const user = { uid,mobile,email,gender,dateOfBirth,education,streetName,streetNumber,area,town,postCode};
 
-            axios.post('https://sadatpostcourier.vercel.app/users', user)
+            axios.post('http://localhost:5000/users', user)
             .then(data => {
               console.log(data);
 
