@@ -4,6 +4,8 @@ import { AuthContext } from '../../providers/AuthProvider';
 import toast from 'react-hot-toast';
 import { FiLock, FiMail, } from 'react-icons/fi';
 import { FcGoogle } from 'react-icons/fc';
+import axios from 'axios';
+import { Helmet } from 'react-helmet-async';
 
 const Login = () => {
     const { signInUser, signInWithGoogle } = useContext(AuthContext);
@@ -26,22 +28,49 @@ const Login = () => {
             });
     };
 
-    const handleGoogleSignIn = () => {
-        signInWithGoogle()
-            .then((result) => {
+    const handleGoogleSignIn = async () => {
+        try {
+            const result = await signInWithGoogle();
+    
+            const userinfo = {
+                name: result.user?.displayName,
+                uid: result.user?.uid,
+                mobile: result.user?.phoneNumber,
+                email: result.user?.email,
+                gender: '',
+                dateOfBirth: '',
+                education: '',
+                streetName: '',
+                streetNumber: '',
+                area: '',
+                town: '',
+                postCode: '',
+            };
+    
+            console.log(userinfo);
+    
+            const response = await axios.post('http://localhost:5000/users', userinfo);
+    
+            if (response.status === 200) {
                 toast.success("Login successful!");
                 navigate(location.state?.from || "/");
-            })
-            .catch((error) => {
-                toast.error("Social login failed. Please try again later.");
-                console.error(error);
-            });
+            } else {
+                toast.error("Failed to create user. Please try again.");
+            }
+        } catch (error) {
+            toast.error("Social login failed. Please try again later.");
+            console.error(error);
+        }
     };
+    
 
     return (
         <div className="flex justify-center items-center h-screen">
             <div className="max-w-md w-full p-8 bg-white rounded-lg shadow-lg">
                 <h1 className="text-3xl font-bold mb-8 text-center">Login now!</h1>
+                <Helmet>
+                <title>Login |Sadat Fast Courier</title>
+                </Helmet>
                 <form className="space-y-4">
                     <div className="space-y-1">
                         <div className="flex items-center">

@@ -5,12 +5,14 @@ import toast from 'react-hot-toast';
 import { AuthContext } from './../../providers/AuthProvider';
 import { updateProfile } from "firebase/auth";
 import axios from 'axios';
+import UseAxioSecure from '../Hook/UseAxioSecure';
 
 
 const Register = () => {
   const { createUser,setUser } = useContext(AuthContext);
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
+    const axiosSecure = UseAxioSecure();
 
 
     const handleRegister = e => {
@@ -85,9 +87,11 @@ const Register = () => {
 
             const uid =result.user?.uid
             const email =result.user?.email
-            const user = { uid,mobile,email,gender,dateOfBirth,education,streetName,streetNumber,area,town,postCode};
-
-            axios.post('http://localhost:5000/users', user)
+            const role ='user';
+          
+            const user = { name,uid,mobile,email,gender,dateOfBirth,education,streetName,streetNumber,area,town,postCode};
+            console.log(user);
+            axiosSecure.post('/users', user)
             .then(data => {
               console.log(data);
 
@@ -189,7 +193,7 @@ const Register = () => {
       <br />
       <div className="mb-2">
         <h3>Photolink</h3>
-        <input className="mb-2 relative border w-full py-2 px-4" type="text" name="Photourl" placeholder="Photourl" id="streetnamereg" required />
+        <input className="mb-2 relative border w-full py-2 px-4" type="text" name="Photourl" placeholder="Photourl" id="photourl" required />
         <br />
       </div>
       <div className="mb-4">
