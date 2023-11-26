@@ -1,18 +1,23 @@
-import React from 'react';
+
+import React, { useState, useEffect, useContext } from 'react';
 import { FaBox, FaEye, FaTruck, FaMoneyBill, FaUser, FaUsers, FaTasks, FaList, FaCreditCard, FaIdBadge, FaClipboardList, FaReceipt, FaUserAlt, FaStar, FaUndo } from 'react-icons/fa';
-import { NavLink, Outlet } from 'react-router-dom';
+import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import useAdmin from '../Hook/useAdmin';
+import { AuthContext } from '../../providers/AuthProvider';
+import toast from 'react-hot-toast';
+
 
 const Dashboard = () => {
+
+    const companyLogo = "https://i.ibb.co/Y8RvjVn/logo.png";
+    const navigate = useNavigate();
+    const {user,logOut } = useContext(AuthContext);
     let dashboardOptions = null;
 
+    const isAdmin = useAdmin();
+    const userRole =isAdmin;
 
-    const userRole =2;
-
-    const userName = "John Doe";
-    const userImage = "https://file.xunruicms.com/admin_html/assets/pages/media/profile/profile_user.jpg";
-    const companyLogo = "https://i.ibb.co/Y8RvjVn/logo.png";
-
-    if (userRole == 1) {
+    if (userRole == 2) {
         dashboardOptions = (
           <>
   <li><NavLink to="/dashboard/addparcel" className="flex items-center py-2 px-4 text-white hover:bg-orange-500"><FaBox className="mr-2"/> Add Parcel</NavLink></li>
@@ -23,7 +28,7 @@ const Dashboard = () => {
           </>
         );
       }
-      if (userRole == 2) {
+      if (userRole == 1) {
         dashboardOptions = (
           <>
             <li><NavLink to="/dashboard/allparcel" className="flex items-center py-2 px-4 text-white hover:bg-orange-500"><FaClipboardList className="mr-2"/> All Parcel</NavLink></li>
@@ -47,6 +52,18 @@ const Dashboard = () => {
         );
       }
 
+      const handleLogOut = () => {
+        logOut()
+          .then(() => {
+            toast.success(`user logged out successfully`); 
+            navigate("/");
+          })
+          .catch((error) => {
+            toast.error('Logout failed. Please try again later.');
+            console.error(error);
+          });
+      };
+
 
 
 
@@ -62,16 +79,13 @@ const Dashboard = () => {
             <div className='flex flex-1'>
                 <div className='w-64 min-h-full bg-gradient-to-b from-orange-400 to-orange-600 p-4'>
                     <div className="flex items-center justify-between mb-6">
-                        <div className="flex items-center">
-                            <img src={userImage} alt="User" className="w-12 h-12 rounded-full mr-3" />
-                            <h2 className="text-white text-lg">{userName}</h2>
-                        </div>
 
                     </div>
                     <ul className='menu'>
                   
                     {dashboardOptions}
                     <li><NavLink to="/dashboard/profile" className="flex items-center py-2 px-4 text-white hover:bg-orange-500"><FaUser className="mr-2"/> My Profile</NavLink></li>
+                    <li><NavLink to="/dashboard/profile" onClick={handleLogOut} className="flex items-center py-2 px-4 text-white hover:bg-orange-500"><FaUser className="mr-2"/> Logout</NavLink></li>
 
                 </ul>
                 </div>

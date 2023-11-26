@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import useAxiosSecure from "../../../Hook/UseAxioSecure";
 import { FaTrashAlt } from 'react-icons/fa';
 import Swal from "sweetalert2";
+import toast from 'react-hot-toast';
 
 const AllUser = () => {
     const axiosSecure = useAxiosSecure();
@@ -26,6 +27,7 @@ const AllUser = () => {
                 await axiosSecure.patch(`/users/${selectedRole}/${selectedUser._id}`);
                 setSelectedUser(null);
                 refetch();
+                toast.success("User update Sucessful")
             } catch (error) {
             }
         }
@@ -140,7 +142,7 @@ const AllUser = () => {
                                 Deliveryman
                             </button>
                             <button
-                                onClick={() => confirmRoleChange('regular user')}
+                                onClick={() => confirmRoleChange('user')}
                                 className="btn bg-blue-500 text-white py-1 px-3 rounded-lg"
                             >
                                 Regular User
