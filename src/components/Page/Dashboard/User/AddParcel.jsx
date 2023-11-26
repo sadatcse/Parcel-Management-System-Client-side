@@ -45,7 +45,7 @@ const AddParcel = () => {
     const SpecialInstructions = e.target.specialInstructions.value;
     const RequestedDeliveryDate = e.target.requestedDeliveryDate.value;
     const EstimatedDeliveryDate = moment().add(7, 'days').calendar();
-    const ParcelCreateTime = moment().format('L');   
+    const ParcelCreateTime = moment().format('lll');   
   
     const DeliveryPrice = calculateDeliveryPrice(ParcelWeight);
   

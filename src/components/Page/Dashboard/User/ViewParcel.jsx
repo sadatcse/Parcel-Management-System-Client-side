@@ -12,33 +12,33 @@ import { useNavigate } from 'react-router-dom';
 
 
 const ViewParcel = () => {
-    const { user } = useContext(AuthContext);
-    const Useremail = user?.email;
-    const navigate = useNavigate();
-    const [filterStatus, setFilterStatus] = useState('All');
+  const { user } = useContext(AuthContext);
+  const Useremail = user?.email;
+  const navigate = useNavigate();
+  const [filterStatus, setFilterStatus] = useState('All');
 
-    const axiosPublic = useAxiosPublic();
-    const { data: parcels = [], refetch } = useQuery({
-        queryKey: ['parcels'],
-        queryFn: async () => {
-            const res = await axiosPublic.get(`/parcels/${Useremail}`);
-            return res.data;
-        }
-    });
+  const axiosPublic = useAxiosPublic();
+  const { data: parcels = [], refetch } = useQuery({
+    queryKey: ['parcels'],
+    queryFn: async () => {
+      const res = await axiosPublic.get(`/parcels/${Useremail}`);
+      return res.data;
+    }
+  });
 
-    const filteredParcels = filterStatus === 'All' ? parcels : parcels.filter(parcel => parcel.ParcelStatus === filterStatus);
-   
+  const filteredParcels = filterStatus === 'All' ? parcels : parcels.filter(parcel => parcel.ParcelStatus === filterStatus);
 
-    const handleFilterChange = (status) => {
-        setFilterStatus(status);
 
-      };
+  const handleFilterChange = (status) => {
+    setFilterStatus(status);
 
- 
+  };
 
-      const handleUpdate = (id) => {
-        navigate(`/dashboard/updateparcel/${id}`);
-      };
+
+
+  const handleUpdate = (id) => {
+    navigate(`/dashboard/updateparcel/${id}`);
+  };
 
   const handleReview = (id) => {
 
@@ -50,36 +50,33 @@ const ViewParcel = () => {
 
   const handleCancel = async (id) => {
     try {
-        const result = await Swal.fire({
-            title: "Cancel Parcel",
-            text: "Are you sure you want to cancel this parcel?",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#3085d6",
-            cancelButtonColor: "#d33",
-            confirmButtonText: "Yes, cancel it!"
-        });
+      const result = await Swal.fire({
+        title: "Cancel Parcel",
+        text: "Are you sure you want to cancel this parcel?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, cancel it!"
+      });
 
-        if (result.isConfirmed) {
-            const res = await axiosPublic.patch(`/parcels/cancel/${id}`);
-            if (res.data.deletedCount > 0) {
-                refetch();
-                await Swal.fire({
-                    title: "Cancelled!",
-                    text: "The parcel has been cancelled.",
-                    icon: "success"
-                });
-            }
-        }
-    } catch (error) {
-        console.error(error);
+      if (result.isConfirmed) {
+        const res = await axiosPublic.patch(`/parcels/cancel/${id}`);
+        refetch();
         await Swal.fire({
-            title: "Error!",
-            text: "Failed to cancel the parcel. Please try again.",
-            icon: "error"
-        });
+          title: "Cancelled!",
+          text: "The parcel has been cancelled.",
+          icon: "success"
+        });}
+    } catch (error) {
+      console.error(error);
+      await Swal.fire({
+        title: "Error!",
+        text: "Failed to cancel the parcel. Please try again.",
+        icon: "error"
+      });
     }
-};
+  };
 
   return (
     <div className="container mx-auto">
@@ -120,25 +117,25 @@ const ViewParcel = () => {
               <td className="py-2 px-4 border">{parcel.ParcelDeliveryManName || 'Not assigned'}</td>
               <td className="py-2 px-4 border">{parcel.ParcelStatus}</td>
               <td className="py-2 px-4 border">
-  {parcel.ParcelStatus === 'pending' && (
-    <>
-      <button onClick={() => handleCancel(parcel._id)} className="flex items-center mr-2 text-red-500">
-        <FaTimes className="mr-1" /> Cancel
-      </button>
-      <button onClick={() => handleUpdate(parcel._id)} className="flex items-center mr-2 text-blue-500">
-        <FaEdit className="mr-1" /> Update
-      </button>
-    </>
-  )}
-  {parcel.ParcelStatus === 'Delivered' && (
-    <button onClick={() => handleReview(parcel._id)} className="flex items-center mr-2 text-green-500">
-      <FaRegComment className="mr-1" /> Review
-    </button>
-  )}
-  <button onClick={() => handlePay(parcel._id)} className="flex items-center text-yellow-500">
-    <FaMoneyBill className="mr-1" /> Pay
-  </button>
-</td>
+                {parcel.ParcelStatus === 'pending' && (
+                  <>
+                    <button onClick={() => handleCancel(parcel._id)} className="flex items-center mr-2 text-red-500">
+                      <FaTimes className="mr-1" /> Cancel
+                    </button>
+                    <button onClick={() => handleUpdate(parcel._id)} className="flex items-center mr-2 text-blue-500">
+                      <FaEdit className="mr-1" /> Update
+                    </button>
+                  </>
+                )}
+                {parcel.ParcelStatus === 'Delivered' && (
+                  <button onClick={() => handleReview(parcel._id)} className="flex items-center mr-2 text-green-500">
+                    <FaRegComment className="mr-1" /> Review
+                  </button>
+                )}
+                <button onClick={() => handlePay(parcel._id)} className="flex items-center text-yellow-500">
+                  <FaMoneyBill className="mr-1" /> Pay
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>

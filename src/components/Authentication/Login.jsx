@@ -20,7 +20,7 @@ const Login = () => {
         signInUser(email, password)
             .then((result) => {
                 toast.success("Login successful!")
-                navigate(location.state?.from || "/");
+                navigate(location.state?.from || "/dashboard");
             })
             .catch((error) => {
                 toast.error("Login failed. Please check your Email or Password.");
@@ -53,7 +53,7 @@ const Login = () => {
     
             if (response.status === 200) {
                 toast.success("Login successful!");
-                navigate(location.state?.from || "/");
+                navigate(location.state?.from || "/dashboard");
             } else {
                 toast.error("Failed to create user. Please try again.");
             }
