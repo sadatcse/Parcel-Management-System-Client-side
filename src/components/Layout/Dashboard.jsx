@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useContext } from 'react';
-import { FaBox, FaEye, FaTruck, FaMoneyBill, FaUser, FaUsers, FaTasks, FaList, FaCreditCard, FaIdBadge, FaClipboardList, FaReceipt, FaUserAlt, FaStar, FaUndo } from 'react-icons/fa';
+import { FaBox, FaEye, FaTruck, FaMoneyBill, FaUser, FaUsers, FaTasks, FaList, FaCreditCard, FaIdBadge, FaClipboardList, FaReceipt, FaUserAlt, FaStar, FaUndo, FaHome } from 'react-icons/fa';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import useAdmin from '../Hook/useAdmin';
 import { AuthContext } from '../../providers/AuthProvider';
@@ -13,13 +13,15 @@ const Dashboard = () => {
     const navigate = useNavigate();
     const {user,logOut } = useContext(AuthContext);
     let dashboardOptions = null;
+    console.log(user);
 
-    const isAdmin = useAdmin();
-    const userRole =isAdmin;
+
+    const userRole =useAdmin();
 
     if (userRole == 2) {
         dashboardOptions = (
           <>
+   <li><NavLink to="/dashboard/userhome" className="flex items-center py-2 px-4 text-white hover:bg-orange-500"><FaHome className="mr-2"/> Add Parcel</NavLink></li>       
   <li><NavLink to="/dashboard/addparcel" className="flex items-center py-2 px-4 text-white hover:bg-orange-500"><FaBox className="mr-2"/> Add Parcel</NavLink></li>
   <li><NavLink to="/dashboard/viewparcel" className="flex items-center py-2 px-4 text-white hover:bg-orange-500"><FaEye className="mr-2"/> View Parcel</NavLink></li>
  <li><NavLink to="/dashboard/mydeliveryparcel" className="flex items-center py-2 px-4 text-white hover:bg-orange-500"><FaTruck className="mr-2"/> All Delivery Parcel</NavLink></li>
@@ -63,6 +65,20 @@ const Dashboard = () => {
             console.error(error);
           });
       };
+
+      const navigateRole = (userRole) => {
+        useEffect(() => {
+            if (userRole == 2) {
+                navigate('/dashboard/userhome');
+            } else if (userRole == 3) {
+                navigate('/dashboard/deliveryhome');
+            } else if (userRole == 1) {
+                navigate('/dashboard/adminhome');
+            }
+        }, [userRole, navigate]);
+    };
+
+    navigateRole(userRole);
 
 
 
