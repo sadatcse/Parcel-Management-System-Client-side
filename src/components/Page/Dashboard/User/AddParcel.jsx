@@ -20,10 +20,7 @@ const AddParcel = () => {
 
   const handlePrice = (event) => {
     const value = event.target.value;
-    setParcelprice(value); 
-    console.log("Real-time parcel weight:", value); 
     const DeliveryPricea = calculateDeliveryPrice(value);
-    console.log("Real-time price:", DeliveryPricea); 
     setParcelprice(DeliveryPricea); 
   };
 
@@ -47,8 +44,8 @@ const AddParcel = () => {
   
     const SpecialInstructions = e.target.specialInstructions.value;
     const RequestedDeliveryDate = e.target.requestedDeliveryDate.value;
-    const EstimatedDeliveryDate = moment().add(2, 'days').calendar(); 
-    const ParcelCreateTime = moment().format('MMMM Do YYYY, h:mm');
+    const EstimatedDeliveryDate = moment().add(7, 'days').calendar();
+    const ParcelCreateTime = moment().format('L');   
   
     const DeliveryPrice = calculateDeliveryPrice(ParcelWeight);
   
@@ -86,9 +83,9 @@ const AddParcel = () => {
  
         <div className="mb-4">
         <p>Sender Email</p>
-        <input className="mb-2 relative border w-full py-2 px-4" type="text" name="senderPhone" placeholder="Sender Phone" id="senderphone" required defaultValue={Useremail} disabled/>
+        <input className="mb-2 relative border w-full py-2 px-4" type="text" name="senderemail" placeholder="Sender Phone" id="senderphone" required defaultValue={Useremail} disabled/>
         <p>Sender Name</p>
-        <input className="mb-2 relative border w-full py-2 px-4" type="text" name="senderPhone" placeholder="Sender Phone" id="senderphone" required defaultValue={Displayname} disabled/>
+        <input className="mb-2 relative border w-full py-2 px-4" type="text" name="sendername" placeholder="Sender Phone" id="senderphone" required defaultValue={Displayname} disabled/>
             <p>Sender Phone Number</p>
           <input className="mb-2 relative border w-full py-2 px-4" type="text" name="senderPhone" placeholder="Sender Phone" id="senderphone" required />
           <br />
@@ -131,7 +128,7 @@ const AddParcel = () => {
           <input className="mb-2 relative border w-full py-2 px-4" type="date" name="requestedDeliveryDate" placeholder="Requested Delivery Date" id="16" required />
           <br />
           <p>Price</p>
-        <input className="mb-2 relative border w-full py-2 px-4" type="text" name="price" placeholder="price" id="price" required defaultValue={parcelprice} disabled/>
+          <input className="mb-2 relative border w-full py-2 px-4" type="text" name="price" placeholder="price" id="price" required value={parcelprice} readOnly/>
         </div>
         <br/>
 

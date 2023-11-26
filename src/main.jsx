@@ -55,6 +55,7 @@ import MyProfile from './components/Page/Dashboard/Universal/MyProfile';
 import UserHome from './components/Page/Dashboard/Home/UserHome';
 import DeliveryHome from './components/Page/Dashboard/Home/DeliveryHome';
 import AdminHome from './components/Page/Dashboard/Home/AdminHome';
+import Updateparcel from './components/Page/Dashboard/Universal/updateparcel';
 
 
 
@@ -160,6 +161,12 @@ const router = createBrowserRouter([
       {
         path:'profile',
         element:<MyProfile></MyProfile>
+        
+      },
+      {
+        path:'updateparcel/:id',
+        element:<Updateparcel></Updateparcel>,
+        loader: ({ params }) => fetch(`http://localhost:5000/indivisualparcels/${params.id}`) ,
         
       },
        //User Area 

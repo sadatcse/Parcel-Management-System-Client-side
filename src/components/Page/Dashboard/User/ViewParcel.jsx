@@ -7,11 +7,14 @@ import Swal from "sweetalert2";
 import toast from 'react-hot-toast';
 import useAxiosPublic from '../../../Hook/useAxiosPublic';
 import { AuthContext } from '../../../../providers/AuthProvider';
+import { useNavigate } from 'react-router-dom';
+
 
 
 const ViewParcel = () => {
     const { user } = useContext(AuthContext);
     const Useremail = user?.email;
+    const navigate = useNavigate();
     const [filterStatus, setFilterStatus] = useState('All');
 
     const axiosPublic = useAxiosPublic();
@@ -19,7 +22,6 @@ const ViewParcel = () => {
         queryKey: ['parcels'],
         queryFn: async () => {
             const res = await axiosPublic.get(`/parcels/${Useremail}`);
-            
             return res.data;
         }
     });
@@ -32,14 +34,11 @@ const ViewParcel = () => {
 
       };
 
-  const handleCancel = (id) => {
-    refetch();
-  };
+ 
 
-  const handleUpdate = (id) => {
-
-    refetch();
-  };
+      const handleUpdate = (id) => {
+        navigate(`/dashboard/updateparcel/${id}`);
+      };
 
   const handleReview = (id) => {
 
@@ -48,6 +47,39 @@ const ViewParcel = () => {
   const handlePay = (id) => {
 
   };
+
+  const handleCancel = async (id) => {
+    try {
+        const result = await Swal.fire({
+            title: "Cancel Parcel",
+            text: "Are you sure you want to cancel this parcel?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, cancel it!"
+        });
+
+        if (result.isConfirmed) {
+            const res = await axiosPublic.patch(`/parcels/cancel/${id}`);
+            if (res.data.deletedCount > 0) {
+                refetch();
+                await Swal.fire({
+                    title: "Cancelled!",
+                    text: "The parcel has been cancelled.",
+                    icon: "success"
+                });
+            }
+        }
+    } catch (error) {
+        console.error(error);
+        await Swal.fire({
+            title: "Error!",
+            text: "Failed to cancel the parcel. Please try again.",
+            icon: "error"
+        });
+    }
+};
 
   return (
     <div className="container mx-auto">
@@ -63,6 +95,7 @@ const ViewParcel = () => {
           <option value="All">All</option>
           <option value="pending">Pending</option>
           <option value="Delivered">Delivered</option>
+          <option value="cancel">Cancel</option>
         </select>
       </div>
       <table className="min-w-full border border-gray-200">
