@@ -24,8 +24,20 @@ const AddParcel = () => {
     setParcelprice(DeliveryPricea); 
   };
 
+  const handleUpdate = async () => {
+    console.log('click me')
+    try {
+      const response = await axiosSecure.patch(`/bookupdate/${Useremail}`);
+      setResponse(response.data);
+    } catch (error) {
+      console.error('Error updating parcel book:', error);
+      // Handle error, show error message, etc.
+    }
+  };
+
   const handleRegister = e => {
     e.preventDefault();
+
   
     const ParcelId = `${sixDigitNumber}`;
     const SenderName = `${Displayname}`; 
@@ -61,9 +73,11 @@ const AddParcel = () => {
     };
   
     console.log(parcel);
+    handleUpdate();
   
     axiosSecure.post('/parcels', parcel)
       .then(data => {
+
         toast.success("Parcel Added Sucessful")
         window.location.reload();
 

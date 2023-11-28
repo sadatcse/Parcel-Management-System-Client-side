@@ -77,7 +77,11 @@ return (
     </div>
     {isOpen && (
  <div onMouseLeave={toggleDropdown} className="absolute menu  top-10 right-20 z-10 bg-white shadow-md p-2 flex flex-col">
-<a onClick={handleLogOut} className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">Sign out</a>
+ <ul>
+    <li className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"><NavLink to="/Dashboard">Dashboard</NavLink></li>
+    <li className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded" onClick={handleLogOut}>Sign out</li>
+  </ul>
+
 
 </div>
     )}

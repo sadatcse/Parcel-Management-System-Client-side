@@ -22,7 +22,7 @@ const ViewParcel = () => {
     queryKey: ['parcels'],
     queryFn: async () => {
       const res = await axiosPublic.get(`/parcels/${Useremail}`);
-      return res.data;
+      return res.data.data;
     }
   });
 

@@ -8,10 +8,16 @@ import { AuthContext } from '../../../../providers/AuthProvider';
 import { FaEdit } from 'react-icons/fa';
 import { IoIosArrowDown } from 'react-icons/io';
 
+
 const AllParcel = () => {
   const { user } = useContext(AuthContext);
   const axiosPublic = useAxiosPublic();
   const navigate = useNavigate();
+
+  const [itemsPerPage, setItemsPerPage] = useState(9);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [count, setCount] = useState(0);
+  const numberOfPages = Math.ceil(count / itemsPerPage);
 
   const [filteredParcels, setFilteredParcels] = useState([]);
   const [fromDate, setFromDate] = useState('');
@@ -26,34 +32,47 @@ const AllParcel = () => {
     queryFn: async () => {
       const res = await axiosPublic.get('/parcels/');
       setFilteredParcels(res.data);
+      setCount(res.data.length); 
+      
       return res.data;
     },
   });
 
-  axiosPublic.get('/deliveryman')
-  .then(response => {
-    setDeliveryMen(response.data);
-  });
+ 
+  async function fetchData() {
+    try {
+      const res = await axiosPublic.get(`/deliveryman`);
+      setDeliveryMen(res.data);
+      console.log(res.data);
+    } catch (error) {
+      console.error("Error fetching deliverymen data:", error);
+    }
+  }
+
+ 
 
 
   const handleAssign = async () => {
-    setselectedParcel(null);
-    console.log(selectedDeliveryMan);
     console.log(deliveryDate);
-    // try {
-    //   // Make a request to update the database
-    //   await axiosPublic.put(`/patchparcels/${selectedParcel._id}`, {
-    //     ParcelStatus: 'On The Way',
-    //     deliveryMenID: selectedDeliveryMan,
-    //     DeliveryManEmail:'',
-    //     ParcelDeliveryManName:'',
-    //     EstimatedDeliveryDate: deliveryDate,
-    //   });
+    const filteredDeliveryMan = deliveryMen.filter(man => man._id === selectedDeliveryMan);
+    console.log(filteredDeliveryMan[0]);
+    const deliverymanEmail=filteredDeliveryMan[0].email;
+    const deliverymanname =filteredDeliveryMan[0].name;
+    
+    try {
+  
+      await axiosPublic.patch(`/patchparcels/${selectedParcel._id}`, {
+        ParcelStatus: 'On The Way',
+        DeliveryManEmail:deliverymanEmail,
+        ParcelDeliveryManName:deliverymanname,
+        EstimatedDeliveryDate: deliveryDate,
+      });
+      refetch();
 
-    //   setselectedParcel(null);
-    // } catch (error) {
-    //   console.error('Error assigning delivery man:', error);
-    // }
+      setselectedParcel(null);
+    } catch (error) {
+      console.error('Error assigning delivery man:', error);
+    }
   };
 
 
@@ -69,21 +88,28 @@ const AllParcel = () => {
     switch (filterType) {
       case 'all':
         filteredData = parcels;
+        
         break;
       case 'delivered':
         filteredData = parcels.filter(parcel => parcel.ParcelStatus === 'Delivery');
+        
         break;
         case 'pending':
         filteredData = parcels.filter(parcel => parcel.ParcelStatus === 'pending');
+       
         break;
         case 'cancelled':
         filteredData = parcels.filter(parcel => parcel.ParcelStatus === 'cancel');
+        
         break;
         case 'onTheWay':
         filteredData = parcels.filter(parcel => parcel.ParcelStatus === 'On The Way');
+        
         break;
         case 'pending':
         filteredData = parcels.filter(parcel => parcel.ParcelStatus === 'pending');
+        setCount(filteredData.length); 
+        
         break;
         case 'latest':
             filteredData = parcels.slice(); 
@@ -95,11 +121,13 @@ const AllParcel = () => {
             break;
       default:
         filteredData = parcels;
+      
         break;
     }
   
   
     setFilteredParcels(filteredData);
+    setCount(filteredData.length); 
   };
 
 
@@ -113,6 +141,7 @@ const AllParcel = () => {
   };
 
   const handleManageParcel = (parcel) => {
+    fetchData();
     setselectedParcel(parcel);
     console.log(parcel);
  
@@ -123,7 +152,6 @@ const AllParcel = () => {
 
     if (fromDate && toDate) {
       searchResults = parcels.filter((parcel) => {
-        // Assuming ParcelCreateTime is a date string in the format 'YYYY-MM-DD'
         const parcelDate = new Date(parcel.ParcelCreateTime).getTime();
         const startDate = new Date(fromDate).getTime();
         const endDate = new Date(toDate).getTime();
@@ -133,6 +161,15 @@ const AllParcel = () => {
     }
 
     setFilteredParcels(searchResults);
+    setCount(searchResults.length); 
+   
+  };
+  
+  const updateParcelData = () => {
+    const startIndex = currentPage * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const pagedMenus = filteredParcels.slice(startIndex, endIndex);
+    return pagedMenus;
   };
 
 
@@ -220,7 +257,8 @@ const AllParcel = () => {
   </tr>
 </thead>
         <tbody>
-          {filteredParcels.map((parcel) => (
+        
+          {updateParcelData().map((parcel) => (
             <tr key={parcel._id}>
               <td className="py-2 px-4 border">{parcel.SenderName}</td>
               <td className="py-2 px-4 border">{parcel.SenderEmail}</td>
@@ -270,6 +308,47 @@ const AllParcel = () => {
         </div>
       </div>
     )}
+      <div className='pagination flex items-center justify-center mt-4 space-x-4'>
+        <p className='text-gray-600'>Current Page: {currentPage + 1}</p>
+        <button
+          onClick={() => setCurrentPage(currentPage - 1)}
+          className={`px-2 py-1 rounded ${currentPage === 0 ? 'bg-gray-300' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
+          disabled={currentPage === 0}
+        >
+          Prev
+        </button>
+        {[...Array(numberOfPages)].map((_, index) => (
+          <button
+            onClick={() => setCurrentPage(index)}
+            key={index}
+            className={`px-2 py-1 rounded ${currentPage === index ? 'bg-yellow-500' : 'bg-gray-300 hover:bg-gray-400'}`}
+          >
+            {index + 1}
+          </button>
+        ))}
+        <button
+          onClick={() => setCurrentPage(currentPage + 1)}
+          className={`px-2 py-1 rounded ${currentPage === numberOfPages - 1 ? 'bg-gray-300' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
+          disabled={currentPage === numberOfPages - 1}
+        >
+          Next
+        </button>
+        <select
+          value={itemsPerPage}
+          onChange={(e) => {
+            setItemsPerPage(Number(e.target.value));
+            setCurrentPage(0);
+          }}
+          className='px-2 py-1 border border-gray-300 rounded'
+        >
+          <option value='9'>9</option>
+          <option value='15'>15</option>
+          <option value='20'>20</option>
+          <option value='25'>25</option>
+          <option value='50'>50</option>
+        </select>
+      </div>
+  
     </div>
   );
 };

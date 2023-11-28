@@ -21,7 +21,7 @@ const queryClient = new QueryClient();
 
 import Root from './components/Root';
 import AuthProvider from './providers/AuthProvider';
-import PrivateRoot from './components/Root/PrivateRoot';
+
 
 
 // Registration and Login 
@@ -38,14 +38,9 @@ import AllUser from './components/Page/Dashboard/Admin/AllUser';
 import AllDeliveryMan from './components/Page/Dashboard/Admin/AllDeliveryMan';
 import AllDuePaymentList from './components/Page/Dashboard/Admin/AllDuePaymentList';
 import AllParcel from './components/Page/Dashboard/Admin/AllParcel';
-import DeliveryManAssignment from './components/Page/Dashboard/Admin/DeliveryManAssignment';
 import SuccessfulPaymentList from './components/Page/Dashboard/Admin/SuccessfulPaymentList';
-import UndeliveryParcelList from './components/Page/Dashboard/Admin/UndeliveryParcelList';
 import MyDeliveryParcelList from './components/Page/Dashboard/Delivery/MyDeliveryParcelList';
 import MyReviews from './components/Page/Dashboard/Delivery/MyReviews';
-import MySuccessfulParcelList from './components/Page/Dashboard/Delivery/MySuccessfulParcelList';
-import ReturnParcelList from './components/Page/Dashboard/Delivery/ReturnParcelList';
-
 import AddParcel from './components/Page/Dashboard/User/AddParcel';
 import AllDeliveryParcel from './components/Page/Dashboard/User/AllDeliveryParcel';
 import PaymentInformation from './components/Page/Dashboard/User/PaymentInformation';
@@ -56,6 +51,8 @@ import UserHome from './components/Page/Dashboard/Home/UserHome';
 import DeliveryHome from './components/Page/Dashboard/Home/DeliveryHome';
 import AdminHome from './components/Page/Dashboard/Home/AdminHome';
 import Updateparcel from './components/Page/Dashboard/Universal/updateparcel';
+import PrivateRoot from './components/Root/PrivateRoot';
+import AdminRoute from './components/Root/AdminRoute';
 
 
 
@@ -86,86 +83,68 @@ const router = createBrowserRouter([
   },
   {
     path: "dashboard",
-    element: <Dashboard></Dashboard>,
+    element: <PrivateRoot><Dashboard></Dashboard></PrivateRoot>,
     errorElement: <Error404></Error404>,
     children: [
       //admin area
       {
         path:'alluser',
-        element:<AllUser></AllUser>
+        element:<AdminRoute><AllUser></AllUser></AdminRoute>
         
       },
       {
         path:'adminhome',
-        element:<AdminHome></AdminHome>
+        element:<AdminRoute><AdminHome></AdminHome></AdminRoute>
         
       },
       {
         path:'alldelivery',
-        element:<AllDeliveryMan></AllDeliveryMan>
+        element:<AdminRoute><AllDeliveryMan></AllDeliveryMan></AdminRoute>,
+        loader: () => fetch('http://localhost:5000/deliveryman')
         
       },
       {
         path:'duepayment',
-        element:<AllDuePaymentList></AllDuePaymentList>
+        element:<AdminRoute><AllDuePaymentList></AllDuePaymentList></AdminRoute>
         
       },
       {
         path:'allparcel',
-        element:<AllParcel></AllParcel>
-        
-      },
-      {
-        path:'deliveryman',
-        element:<DeliveryManAssignment></DeliveryManAssignment>
+        element:<AdminRoute><AllParcel></AllParcel></AdminRoute>
         
       },
       {
         path:'successfulpayment',
-        element:<SuccessfulPaymentList></SuccessfulPaymentList>
+        element:<AdminRoute><SuccessfulPaymentList></SuccessfulPaymentList></AdminRoute>
         
       },
-      {
-        path:'undelivery',
-        element:<UndeliveryParcelList></UndeliveryParcelList>
-        
-      },
+
        //Delivery man area
        {
         path:'deliveryhome',
-        element:<DeliveryHome></DeliveryHome>
+        element:<PrivateRoot><DeliveryHome></DeliveryHome></PrivateRoot>
         
       },
 
        {
         path:'mydelivery',
-        element:<MyDeliveryParcelList></MyDeliveryParcelList>
+        element:<PrivateRoot><MyDeliveryParcelList></MyDeliveryParcelList></PrivateRoot>
         
       },
       {
         path:'myreviews',
-        element:<MyReviews></MyReviews>
-        
-      },
-      {
-        path:'sucessparcel',
-        element:<MySuccessfulParcelList></MySuccessfulParcelList>
-        
-      },
-      {
-        path:'returnparcel',
-        element:<ReturnParcelList></ReturnParcelList>
+        element:<PrivateRoot><MyReviews></MyReviews></PrivateRoot>
         
       },
         //Universal
       {
         path:'profile',
-        element:<MyProfile></MyProfile>
+        element:<PrivateRoot><MyProfile></MyProfile></PrivateRoot>
         
       },
       {
         path:'updateparcel/:id',
-        element:<Updateparcel></Updateparcel>,
+        element:<PrivateRoot><Updateparcel></Updateparcel></PrivateRoot>,
         loader: ({ params }) => fetch(`http://localhost:5000/indivisualparcels/${params.id}`) ,
         
       },
@@ -174,34 +153,34 @@ const router = createBrowserRouter([
   
       {
         path:'addparcel',
-        element:<AddParcel></AddParcel>
+        element:<PrivateRoot><AddParcel></AddParcel></PrivateRoot>
         
       },
       {
         path:'userhome',
-        element:<UserHome></UserHome>
+        element:<PrivateRoot><UserHome></UserHome></PrivateRoot>
         
       },
 
       {
         path:'viewparcel',
-        element:<ViewParcel></ViewParcel>
+        element:<PrivateRoot><ViewParcel></ViewParcel></PrivateRoot>
         
       },
 
       {
         path:'mydeliveryparcel',
-        element:<AllDeliveryParcel></AllDeliveryParcel>
+        element:<PrivateRoot><AllDeliveryParcel></AllDeliveryParcel></PrivateRoot>
         
       },
       {
         path:'pinfo',
-        element:<PaymentInformation></PaymentInformation>
+        element:<PrivateRoot><PaymentInformation></PaymentInformation></PrivateRoot>
         
       },
       {
         path:'paymentslip',
-        element:<PaymentSlip></PaymentSlip>
+        element:<PrivateRoot><PaymentSlip></PaymentSlip></PrivateRoot>
         
       },
     ]

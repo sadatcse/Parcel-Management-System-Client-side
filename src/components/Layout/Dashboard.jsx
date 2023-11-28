@@ -14,9 +14,9 @@ const Dashboard = () => {
     const {user,logOut } = useContext(AuthContext);
     let dashboardOptions = null;
     console.log(user);
+    const { userType, loading: adminLoading } = useAdmin();
 
-
-    const userRole =useAdmin();
+    const userRole =userType;
 
     if (userRole == 2) {
         dashboardOptions = (
@@ -35,10 +35,8 @@ const Dashboard = () => {
           <>
              <li><NavLink to="/dashboard/adminhome" className="flex items-center py-2 px-4 text-white hover:bg-orange-500"><FaHome className="mr-2"/> Admin Home</NavLink></li>
             <li><NavLink to="/dashboard/allparcel" className="flex items-center py-2 px-4 text-white hover:bg-orange-500"><FaClipboardList className="mr-2"/> All Parcel</NavLink></li>
-            <li><NavLink to="/dashboard/undelivery" className="flex items-center py-2 px-4 text-white hover:bg-orange-500"><FaUndo className="mr-2"/> Undelivery Parcel List</NavLink></li>
             <li><NavLink to="/dashboard/alluser" className="flex items-center py-2 px-4 text-white hover:bg-orange-500"><FaUsers className="mr-2"/> All User</NavLink></li>
             <li><NavLink to="/dashboard/alldelivery" className="flex items-center py-2 px-4 text-white hover:bg-orange-500"><FaUserAlt className="mr-2"/> All Delivery Man</NavLink></li>
-            <li><NavLink to="/dashboard/deliveryman" className="flex items-center py-2 px-4 text-white hover:bg-orange-500"><FaTasks className="mr-2"/> Delivery Man Assignment</NavLink></li>
             <li><NavLink to="/dashboard/duepayment" className="flex items-center py-2 px-4 text-white hover:bg-orange-500"><FaCreditCard className="mr-2"/> All Due Payment List</NavLink></li>
             <li><NavLink to="/dashboard/successfulpayment" className="flex items-center py-2 px-4 text-white hover:bg-orange-500"><FaStar className="mr-2"/> Successful Payment List</NavLink></li>
           </>
@@ -49,9 +47,7 @@ const Dashboard = () => {
           <>
            <li><NavLink to="/dashboard/deliveryhome" className="flex items-center py-2 px-4 text-white hover:bg-orange-500"><FaHome className="mr-2"/> Home</NavLink></li>
             <li><NavLink to="/dashboard/mydelivery" className="flex items-center py-2 px-4 text-white hover:bg-orange-500"><FaTruck className="mr-2"/> My Delivery Parcel List</NavLink></li>
-            <li><NavLink to="/dashboard/sucessparcel" className="flex items-center py-2 px-4 text-white hover:bg-orange-500"><FaBox className="mr-2"/> My Successful Parcel List</NavLink></li>
             <li><NavLink to="/dashboard/myreviews" className="flex items-center py-2 px-4 text-white hover:bg-orange-500"><FaStar className="mr-2"/> My Reviews</NavLink></li>
-            <li><NavLink to="/dashboard/returnparcel" className="flex items-center py-2 px-4 text-white hover:bg-orange-500"><FaBox className="mr-2"/> Return Parcel List</NavLink></li>
           </>
         );
       }
