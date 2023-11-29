@@ -65,53 +65,58 @@ const MyDeliveryParcelList = () => {
             confirmButtonText: 'Yes, cancel it!',
             cancelButtonText: 'No, keep it'
         });
-
+    
         if (confirmation.isConfirmed) {
-
             try {
                 const response = await axiosPublic.patch(`/parcels/cancel/${id}`);
-                setResponse(response.data);
+                if (response.status === 200) {
+                    await refetch(); 
+                    setResponse(response.data);
+    
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Booking Cancelled!',
+                        text: 'The booking has been cancelled successfully.',
+                    });
+                } else {
+                    throw new Error('Cancellation failed');
+                }
             } catch (error) {
                 setResponse(error.message);
             }
-            refetch();
-
-            Swal.fire({
-                icon: 'success',
-                title: 'Booking Cancelled!',
-                text: 'The booking has been cancelled successfully.',
-            });
         }
     };
 
 
 
-
     const handleDeliver = async (id) => {
         console.log(id);
-        const confirmation = await Swal.fire({
-            icon: 'warning',
-            title: 'Are you sure?',
-            text: 'This action will mark the booking as delivered. Do you want to proceed?',
-            showCancelButton: true,
-            confirmButtonText: 'Yes, mark as delivered!',
-            cancelButtonText: 'No, keep it'
-        });
-
-        if (confirmation.isConfirmed) {
-            try {
-                const response = await axiosPublic.patch(`/parcels/Delivery/${id}`);
-                setResponse(response.data);
-            } catch (error) {
-                setResponse(error.message);
-            }
-            refetch();
-
-            Swal.fire({
-                icon: 'success',
-                title: 'Booking Delivered!',
-                text: 'The booking has been marked as delivered successfully.',
+        try {
+            const confirmation = await Swal.fire({
+                icon: 'warning',
+                title: 'Are you sure?',
+                text: 'This action will mark the booking as delivered. Do you want to proceed?',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, mark as delivered!',
+                cancelButtonText: 'No, keep it'
             });
+    
+            if (confirmation.isConfirmed) {
+                const response = await axiosPublic.patch(`/parcels/Delivery/${id}`);
+                if (response.status === 200) {
+                    await Swal.fire({
+                        icon: 'success',
+                        title: 'Booking Delivered!',
+                        text: 'The booking has been marked as delivered successfully.',
+                    });
+                    refetch();
+                    setResponse(response.data);
+                } else {
+                    throw new Error('Failed to mark as delivered');
+                }
+            }
+        } catch (error) {
+            setResponse(error.message);
         }
     };
 

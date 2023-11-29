@@ -4,11 +4,13 @@ import toast from 'react-hot-toast';
 import { calculateDeliveryPrice } from '../../../Utilis/price';
 import moment from 'moment';
 import UseAxioSecure from '../../../Hook/UseAxioSecure';
+import Swal from "sweetalert2";
 
 const AddParcel = () => {
   const { user } = useContext(AuthContext);
   const [parcelprice, setParcelprice] = useState('');
   const axiosSecure = UseAxioSecure();
+  const currentDate = moment().format('YYYY-MM-DD');
   const generateSixDigitNumber = () => {
     return Math.floor(100000 + Math.random() * 900000);
   };
@@ -24,16 +26,6 @@ const AddParcel = () => {
     setParcelprice(DeliveryPricea); 
   };
 
-  const handleUpdate = async () => {
-    console.log('click me')
-    try {
-      const response = await axiosSecure.patch(`/bookupdate/${Useremail}`);
-      setResponse(response.data);
-    } catch (error) {
-      console.error('Error updating parcel book:', error);
-      // Handle error, show error message, etc.
-    }
-  };
 
   const handleRegister = e => {
     e.preventDefault();
@@ -56,7 +48,7 @@ const AddParcel = () => {
   
     const SpecialInstructions = e.target.specialInstructions.value;
     const RequestedDeliveryDate = e.target.requestedDeliveryDate.value;
-    const EstimatedDeliveryDate = moment().add(7, 'days').calendar();
+    const EstimatedDeliveryDate = moment().add(3, 'days').format('YYYY-MM-DD');
     const ParcelCreateTime = moment().format('lll');   
   
     const DeliveryPrice = calculateDeliveryPrice(ParcelWeight);
@@ -64,6 +56,85 @@ const AddParcel = () => {
     const ParcelStatus = 'pending';
     const ParcelDeliveryManName = null;
     const DeliveryManEmail = null;
+
+    const requestedDateMoment = moment(RequestedDeliveryDate, 'YYYY-MM-DD');
+
+    if (RecipientName.trim() === '') {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Please enter your name Recipient.'
+      });
+      return;
+    } else if (RecipientName.length < 3) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Recipient Name should be at least 3 characters long.'
+      });
+      return;
+    } else if (!/^[A-Za-z\s]+$/.test(RecipientName)) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Please enter a valid Recipient name (alphabetic characters and spaces only).'
+      });
+      return;
+    }
+    if (requestedDateMoment.isSameOrBefore(currentDate, 'day')) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Requested delivery date should be a future date.'
+      });
+      return;
+    }
+
+    if (SenderPhone.trim() === '') {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Please enter your phone number.'
+      });
+      return;
+    } else if (!/^\d{11}$/.test(SenderPhone)) { 
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Please enter a valid phone number (11 digits).'
+      });
+      return;
+    }
+
+    if (RecipientEmail.trim() === '') {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Please enter recipient email.'
+      });
+      return;
+    } else if (!/\S+@\S+\.\S+/.test(RecipientEmail)) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Please enter a valid email address.'
+      });
+      return;
+    }if (RecipientEmail.trim() === '') {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Please enter recipient email.'
+      });
+      return;
+    } else if (!/\S+@\S+\.\S+/.test(RecipientEmail)) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Please enter a valid email address.'
+      });
+      return;
+    }
   
     const parcel = {
       ParcelId, SenderName, SenderEmail, SenderPhone, RecipientName, RecipientEmail, RecipientPhone,
@@ -72,20 +143,26 @@ const AddParcel = () => {
       DeliveryManEmail, EstimatedDeliveryDate, ParcelCreateTime
     };
   
-    console.log(parcel);
-    handleUpdate();
-  
     axiosSecure.post('/parcels', parcel)
-      .then(data => {
-
-        toast.success("Parcel Added Sucessful")
+    .then(data => {
+      Swal.fire({
+        icon: 'success',
+        title: 'Parcel Added Successfully',
+        showConfirmButton: false,
+        timer: 2500 
+      }).then(() => {
         window.location.reload();
-
-      })
-      .catch(error => {
-        console.error("Error:", error);
-  
       });
+    })
+    .catch(error => {
+      console.error("Error:", error);
+    
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'There was an error adding the parcel.'
+      });
+    });
   };
 
 

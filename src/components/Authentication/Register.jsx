@@ -101,7 +101,7 @@ const Register = () => {
 
             .then(() => {
               toast.success('New User Create Sucessful');
-              navigate("/");
+              navigate(location.state?.from || "/dashboard");
               
               
             })
