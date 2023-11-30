@@ -5,7 +5,6 @@ export const CheckAdmin = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
   const { userType, loading: adminLoading } = useAdmin();
-  console.log(userType);
 
   useEffect(() => {
     if (userType == 1) {

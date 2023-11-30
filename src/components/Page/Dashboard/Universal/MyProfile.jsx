@@ -7,51 +7,97 @@ import useAxiosPublic from '../../../Hook/useAxiosPublic';
 import { useForm } from "react-hook-form";
 import Swal from 'sweetalert2';
 function MyProfile() {
+
+  const image_hosting_key = import.meta.env.VITE_IMAGE_HOSTING_KEY;
+  const image_hosting_api = `https://api.imgbb.com/1/upload?key=${image_hosting_key}`;
+  const navigate = useNavigate();
   const { user } = useContext(AuthContext);
-  const [prouser, setprouser] = useState({});
   const [formData, setFormData] = useState('');
+  const [users, setusers] = useState([]);
   const axiosPublic = useAxiosPublic();
-  const { register, handleSubmit } = useForm();
+  const [imageurl, setimageurl] = useState();
 
-  const { data: users = [] } = useQuery({
-    queryKey: ['users'],
-    queryFn: async () => {
-      const res = await axiosPublic.get(`/users/${user.email}`);
-      setprouser(res.data); 
-      setFormData(res.data); 
-      return res.data;
+  useEffect(() => {
+
+    if (user && user.email) {
+      axiosPublic.get(`/users/${user.email}`).then((res) => {
+        setusers(res.data);
+        setimageurl(res.data.Photourl);
+      }).catch((error) => {
+        console.error('Error fetching user data:', error);
+      });
     }
-  });
+  }, [axiosPublic, user]);
+  
 
-  const handleProfilePicUpload = (e) => {
+  const handleImageUpload = async (e) => {
+    const imageFile = e.target.files[0]; 
+    const formData = new FormData();
+    formData.append('image', imageFile);
 
-  };
+    try {
+      const res = await axiosPublic.post(image_hosting_api, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      setimageurl(res.data.data.url);
+      setFormData({ Photourl: res.data.data.url });
 
-  const handleUpdateProfile = () => {
+      await Swal.fire({
+        icon: 'success',
+        title: 'Image uploaded successfully!',
+        text: `Image URL: ${res.data.data.url}`,
+      });
+    } catch (error) {
 
-  };
+      await Swal.fire({
+        icon: 'error',
+        title: 'Error uploading image',
+        text: error.message, 
+      });
+    }
+    }
+
 
   const handleformdataChange = (e) => {
+    
     setFormData(prevFormData => ({
       ...prevFormData,
       [e.target.name]: e.target.value,
+      
     }));}
 
     const handleUpdate = async (e) => {
       e.preventDefault();
-      console.log('yes');
     
       try {
         const response = await axiosPublic.patch(`/users/${users._id}`, formData);
+        if (response.data && response.data.message === 'User updated successfully') {
+          Swal.fire({
+            icon: 'success',
+            title: 'User Updated Successfully',
+            showConfirmButton: false,
+            timer: 1500 
+          }).then(() => {
+
+            // navigate(`/dashboard/`);
+          });
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Failed to Update User',
+            text: 'An error occurred while updating the user',
+          });
+        }
+      } catch (error) {
+        console.error("Error:", error);
         Swal.fire({
-          icon: 'success',
-          title: 'User Updated Successfully',
-          showConfirmButton: false,
-          timer: 1500 
-        }).then(() => {
-          navigate(`/dashboard`);
+          icon: 'error',
+          title: 'Server Error',
+          text: 'Internal server error occurred',
         });
-      } catch (error) {console.error("Error:", error);}
+      }
     };
   return (
     <div className="bg-gray-100">
@@ -64,11 +110,11 @@ function MyProfile() {
           <form onSubmit={handleUpdate}>
 
           <div class="grid grid-rows-3 grid-flow-col gap-4">
-  <div class="row-span-3 ..."><div className="avatar"><div className="w-96 h-96 rounded-xl"><img src={users.Photourl} />
+  <div class="row-span-3 ..."><div className="avatar"><div className="w-96 h-96 rounded-xl"><img src={imageurl} />
   </div></div>
     </div>
   <div class="col-span-2 ..."><div><p>User Full Name</p>
-<input onChange={handleformdataChange} className="mb-2 relative border w-full py-2 px-4" type="text" name="SenderPhone" placeholder="Sender Phone" id="senderphone" 
+<input onChange={handleformdataChange} className="mb-2 relative border w-full py-2 px-4" type="text" name="name" placeholder="Username" id="name" 
 required defaultValue={users.name} /></div></div>
   <div class="col-span-2 ..."><div><p>Education</p>
 <input onChange={handleformdataChange} className="mb-2 relative border w-full py-2 px-4" type="text" name="education" placeholder="Education" id="education" 
@@ -79,33 +125,23 @@ required defaultValue={users.education} /></div></div>
 
 <div class="grid grid-cols-2 gap-4">
   <div><h1>Upload Profile Image</h1>
-    <div className="form-control w-full my-6">
-                        <input {...register('image', { required: true })} type="file" className="file-input w-full max-w-xs" />
-                    </div></div>
+  <div className="form-control w-full my-6">
+      <input onChange={handleImageUpload} type="file" className="file-input w-full max-w-xs" />
+    </div></div>
 
                     <div><p>Full Image Url</p>
 <input onChange={handleformdataChange} className="mb-2 relative border w-full py-2 px-4" type="text" name="Photourl" placeholder="Full Photourl" id="Photourl" 
-required defaultValue={users.Photourl} /></div>
+required defaultValue={imageurl} /></div>
 </div>
 
 <div class="grid grid-cols-2 gap-4">
-  <div><p>User Gender</p>
+  <div><p>Your Gender</p>
   <div className="mb-4 relative border">
-       
-        <select
-          id="gender"
-          name="Gender"
-          onChange={handleformdataChange}
-          className="w-full py-2 px-4"
-          value={users.gender}
-          required
-        >
-          <option value="" disabled selected>
-            Select Gender
-          </option>
-          <option value="Male">Male</option>
-          <option value="Female">Female</option>
-        </select>
+        <label htmlFor="gender">Gender:</label>
+        <select onChange={handleformdataChange} type="text" name="gender" id="gender" className="gender-select" defaultValue={users.gender}>
+  <option value="male">Male</option>
+  <option value="female">Female</option>
+</select>
       </div></div>
 
       <div><p>User Phone Number</p>

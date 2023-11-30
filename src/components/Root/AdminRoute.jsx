@@ -8,7 +8,6 @@ const AdminRoute = ({ children }) => {
     const isAdmin = CheckAdmin();
     const location = useLocation();
 
-    console.log(isAdmin);
 
     if (user && isAdmin) {
         return children;

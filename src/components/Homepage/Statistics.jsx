@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { FaBox, FaTruck, FaUsers } from 'react-icons/fa';
 import CountUp from 'react-countup';
-
+import useAxiosPublic from '../Hook/useAxiosPublic';
 const Statistics = () => {
     const [statistics, setStatistics] = useState(null);
+    const axiosPublic = useAxiosPublic();
 
     useEffect(() => {
-        axios.get('http://localhost:5000/statistics/')
+        axiosPublic.get('/statistics/')
             .then(response => {
                 setStatistics(response.data);
             })

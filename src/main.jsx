@@ -100,7 +100,7 @@ const router = createBrowserRouter([
       {
         path:'alldelivery',
         element:<AdminRoute><AllDeliveryMan></AllDeliveryMan></AdminRoute>,
-        loader: () => fetch('http://localhost:5000/deliveryman')
+        loader: () => fetch('https://sadatfast-server.vercel.app/deliveryman')
         
       },
       {
@@ -145,7 +145,7 @@ const router = createBrowserRouter([
       {
         path:'updateparcel/:id',
         element:<PrivateRoot><Updateparcel></Updateparcel></PrivateRoot>,
-        loader: ({ params }) => fetch(`http://localhost:5000/indivisualparcels/${params.id}`) ,
+        loader: ({ params }) => fetch(`https://sadatfast-server.vercel.app/indivisualparcels/${params.id}`) ,
         
       },
        //User Area 

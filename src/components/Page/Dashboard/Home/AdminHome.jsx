@@ -8,7 +8,7 @@ const AdminHome = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/parceldata/');
+                const response = await axios.get('https://sadatfast-server.vercel.app/parceldata/');
                 setParcelData(response.data);
             } catch (error) {
                 console.error('Error fetching parcel data:', error);

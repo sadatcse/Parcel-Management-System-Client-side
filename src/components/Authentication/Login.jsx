@@ -6,8 +6,10 @@ import { FiLock, FiMail, } from 'react-icons/fi';
 import { FcGoogle } from 'react-icons/fc';
 import axios from 'axios';
 import { Helmet } from 'react-helmet-async';
+import useAxiosPublic from "../Hook/useAxiosPublic";
 
 const Login = () => {
+    const axiosPublic = useAxiosPublic();
     const { signInUser, signInWithGoogle } = useContext(AuthContext);
     const navigate = useNavigate();
     const [email, setEmail] = useState("");
@@ -50,7 +52,7 @@ const Login = () => {
     
             console.log(userinfo);
     
-            const response = await axios.post('http://localhost:5000/users', userinfo);
+            const response = await axiosPublic.post('/users', userinfo);
     
             if (response.status === 200) {
                 toast.success("Login successful!");

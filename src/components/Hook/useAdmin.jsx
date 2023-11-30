@@ -21,7 +21,7 @@ const useAdmin = () => {
                     userType = 3;
                 }
 
-                console.log(userType);
+
                 return userType;
             } catch (error) {
             

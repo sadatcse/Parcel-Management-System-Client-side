@@ -8,17 +8,23 @@ import toast from 'react-hot-toast';
 const AllUser = () => {
     const axiosSecure = useAxiosSecure();
     const [count, setCount] = useState(0);
-    const { data: users = [], refetch } = useQuery({
+
+
+      const { data: usersData = [], isLoading, isError, refetch } = useQuery({
         queryKey: ['users'],
         queryFn: async () => {
+          try {
             const res = await axiosSecure.get('/users');
             setCount(res.data.length); 
             return res.data;
-
-        }
-    });
-
-
+            
+          } catch (error) {
+            throw new Error(error)
+          }
+        },
+      });
+    
+      const users = Array.isArray(usersData) ? usersData : [];
 
 
     const [selectedUser, setSelectedUser] = useState(null);
@@ -103,7 +109,7 @@ const AllUser = () => {
                                 <td className="border px-4 py-2">{index + 1}</td>
                                 <td className="border px-4 py-2">{user.name}</td>
                                 <td className="border px-4 py-2">{user.email}</td>
-                                <td className="border px-4 py-2">{user.ParcelBook !== undefined && user.ParcelBook !== null ? user.ParcelBook : 'Not User'}</td>
+                                <td className="border px-4 py-2">{user.ParcelBook !== undefined && user.ParcelBook !== null ? user.ParcelBook : 'Not User or Not Send any Parcel'}</td>
 
                                 <td className="border px-4 py-2">
                                     {user.role === 'admin' ? (

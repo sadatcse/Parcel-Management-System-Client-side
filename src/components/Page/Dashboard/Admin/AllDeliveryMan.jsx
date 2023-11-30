@@ -4,7 +4,6 @@ import { useLoaderData } from 'react-router-dom';
 
 const AllDeliveryMan = () => {
     const deliveryMen = useLoaderData();
-    console.log(deliveryMen.userDataList);
     const deliverman =deliveryMen.userDataList;
   
 
