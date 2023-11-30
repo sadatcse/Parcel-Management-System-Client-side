@@ -1,12 +1,11 @@
 import React, { useContext, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import Swal from 'sweetalert2';
-import toast from 'react-hot-toast';
-import useAxiosPublic from '../../../Hook/useAxiosPublic';
+import Swal from 'sweetalert2'
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../../../providers/AuthProvider';
 import { FaEdit } from 'react-icons/fa';
 import { IoIosArrowDown } from 'react-icons/io';
+import useAxiosPublic from './../../../Hook/useAxiosPublic';
 
 
 const AllParcel = () => {
@@ -41,7 +40,7 @@ const AllParcel = () => {
  
   async function fetchData() {
     try {
-      const res = await axiosPublic.get(`/deliveryman`);
+      const res = await axiosPublic.get(`/alldeliveryman`);
       setDeliveryMen(res.data);
       console.log(res.data);
     } catch (error) {
@@ -56,22 +55,32 @@ const AllParcel = () => {
     console.log(deliveryDate);
     const filteredDeliveryMan = deliveryMen.filter(man => man._id === selectedDeliveryMan);
     console.log(filteredDeliveryMan[0]);
-    const deliverymanEmail=filteredDeliveryMan[0].email;
-    const deliverymanname =filteredDeliveryMan[0].name;
-    
-    try {
+    const deliverymanEmail = filteredDeliveryMan[0].email;
+    const deliverymanname = filteredDeliveryMan[0].name;
   
+    try {
       await axiosPublic.patch(`/patchparcels/${selectedParcel._id}`, {
         ParcelStatus: 'On The Way',
-        DeliveryManEmail:deliverymanEmail,
-        ParcelDeliveryManName:deliverymanname,
+        DeliveryManEmail: deliverymanEmail,
+        ParcelDeliveryManName: deliverymanname,
         EstimatedDeliveryDate: deliveryDate,
       });
       refetch();
-
+  
       setselectedParcel(null);
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Delivery Man Assigned!',
+        text: 'The delivery man has been successfully assigned.',
+      });
     } catch (error) {
       console.error('Error assigning delivery man:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Assignment Failed',
+        text: 'There was an error assigning the delivery man. Please try again.',
+      });
     }
   };
 
@@ -276,11 +285,15 @@ const AllParcel = () => {
               className="border border-gray-300 p-2 rounded-md mb-4"
             >
               <option value="">Select Delivery Man</option>
-              {deliveryMen.map((deliveryMan) => (
-                <option key={deliveryMan.name} value={deliveryMan._id}>
-                  {deliveryMan.name} - {deliveryMan._id}
-                </option>
-              ))}
+              {deliveryMen.length > 0 ? (
+  deliveryMen.map((deliveryMan) => (
+    <option key={deliveryMan._id} value={deliveryMan._id}>
+      {deliveryMan.name} - {deliveryMan._id}
+    </option>
+  ))
+) : (
+  <option value="">Loading...</option>
+)}
             </select>
             <input
               type="date"
