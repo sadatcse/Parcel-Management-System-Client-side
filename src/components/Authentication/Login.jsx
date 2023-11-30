@@ -37,6 +37,7 @@ const Login = () => {
                 uid: result.user?.uid,
                 mobile: result.user?.phoneNumber,
                 email: result.user?.email,
+                Photourl:result.user?.photoURL,
                 gender: '',
                 dateOfBirth: '',
                 education: '',

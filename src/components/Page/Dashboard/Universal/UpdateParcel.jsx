@@ -50,12 +50,16 @@ const UpdateParcel = () => {
     console.log('yes');
   
     try {
-      const response = await axiosSecure.patch(`/patchparcels/${parcel._id}`, formData);
-      toast.success("Parcel Details Updated Successfully");
-      navigate(`/dashboard/viewparcel`);
+      const response = await axiosSecure.patch(`/users/${parcel._id}`, formData);
+      Swal.fire({
+        icon: 'success',
+        title: 'Success!',
+        text: 'User Updated Successfully',
+      }).then(() => {
+       
+      });
     } catch (error) {
       console.error("Error:", error);
-      // Handle error here
     }
   };
 

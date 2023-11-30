@@ -89,7 +89,7 @@ const Register = () => {
             const email =result.user?.email
             const role ='user';
           
-            const user = { name,uid,mobile,email,gender,dateOfBirth,education,streetName,streetNumber,area,town,postCode};
+            const user = { name,Photourl,uid,mobile,email,gender,dateOfBirth,education,streetName,streetNumber,area,town,postCode};
             console.log(user);
             axiosSecure.post('/users', user)
             .then(data => {

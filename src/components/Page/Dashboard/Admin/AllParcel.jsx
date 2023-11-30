@@ -76,60 +76,47 @@ const AllParcel = () => {
   };
 
 
-
-
-
-  
-
-  
   const handleFilter = (filterType) => {
     let filteredData = [];
-  
+    
     switch (filterType) {
       case 'all':
         filteredData = parcels;
-        
         break;
+  
       case 'delivered':
         filteredData = parcels.filter(parcel => parcel.ParcelStatus === 'Delivery');
-        
         break;
-        case 'pending':
+  
+      case 'pending':
         filteredData = parcels.filter(parcel => parcel.ParcelStatus === 'pending');
-       
         break;
-        case 'cancelled':
+  
+      case 'cancelled':
         filteredData = parcels.filter(parcel => parcel.ParcelStatus === 'cancel');
-        
         break;
-        case 'onTheWay':
+  
+      case 'onTheWay':
         filteredData = parcels.filter(parcel => parcel.ParcelStatus === 'On The Way');
-        
         break;
-        case 'pending':
-        filteredData = parcels.filter(parcel => parcel.ParcelStatus === 'pending');
-        setCount(filteredData.length); 
-        
+  
+      case 'latest':
+        filteredData = parcels.slice(); 
+        filteredData.sort((a, b) => {
+          const dateA = new Date(a.RequestedDeliveryDate);
+          const dateB = new Date(b.RequestedDeliveryDate);
+          return dateB - dateA;
+        });
         break;
-        case 'latest':
-            filteredData = parcels.slice(); 
-            filteredData.sort((a, b) => {
-              const dateA = new Date(a.RequestedDeliveryDate);
-              const dateB = new Date(b.RequestedDeliveryDate);
-              return dateB - dateA;
-            });
-            break;
+  
       default:
         filteredData = parcels;
-      
         break;
     }
-  
   
     setFilteredParcels(filteredData);
     setCount(filteredData.length); 
   };
-
 
 
   const handleFromDateChange = (date) => {

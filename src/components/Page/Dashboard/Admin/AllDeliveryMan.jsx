@@ -4,6 +4,8 @@ import { useLoaderData } from 'react-router-dom';
 
 const AllDeliveryMan = () => {
     const deliveryMen = useLoaderData();
+    console.log(deliveryMen.userDataList);
+    const deliverman =deliveryMen.userDataList;
   
 
     return (
@@ -23,12 +25,12 @@ const AllDeliveryMan = () => {
                         </tr>
                     </thead>
                     <tbody className="text-gray-700">
-                        {deliveryMen.map((deliveryMan, index) => (
+                        {deliverman.map((deliveryMan, index) => (
                             <tr key={index} className="border-b border-gray-300">
-                                <td className="px-4 py-2">{deliveryMan.name}</td>
-                                <td className="px-4 py-2">{deliveryMan.mobile}</td>
-                                <td className="px-4 py-2">{deliveryMan.parcelsDelivered}</td>
-                                <td className="px-4 py-2">{deliveryMan.averageReview}</td>
+                                <td className="px-4 py-2  text-center">{deliveryMan.userData.name}</td>
+                                <td className="px-4 py-2 text-center">{deliveryMan.userData.Mobile}</td>
+                                <td className="px-4 py-2 text-center">{deliveryMan.ParcelDelivery}</td>
+                                <td className="px-4 py-2 text-center">{deliveryMan.averageRating}</td>
                             </tr>
                         ))}
                     </tbody>
